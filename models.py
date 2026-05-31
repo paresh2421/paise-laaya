@@ -14,7 +14,7 @@ class Transaction(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     amount: float
     type: str
-    note: str
+    note: str | None = None
     transaction_date: date = Field(default_factory=date.today)
 
     #foreign keys to account and category table
