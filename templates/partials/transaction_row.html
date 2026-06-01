@@ -1,0 +1,10 @@
+<tr class="text-sm">
+    <td class="py-3 text-gray-500">{{ tx.transaction_date }}</td>
+    <td class="py-3 capitalize font-medium {% if tx.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+        {{ tx.type }}
+    </td>
+    <td class="py-3 font-bold {% if tx.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+        {% if tx.type == 'income' %}+{% else %}-{% endif %}₹{{ tx.amount }}
+    </td>
+    <td class="py-3 text-gray-600 italic">{{ tx.note or '—' }}</td>
+</tr>

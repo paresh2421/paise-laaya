@@ -12,9 +12,14 @@
 <body class="bg-gray-100 text-gray-800 font-sans p-6">
     
     <div class="max-w-5xl mx-auto">
-        <header class="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm">
-            <h1 class="text-2xl font-bold text-blue-600">Wallet Manager</h1>
-            <span class="text-sm text-gray-500">Local DB Active</span>
+      <header class="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <div class="flex items-baseline gap-6">
+                <h1 class="text-2xl font-bold text-blue-600">Wallet Manager</h1>
+                <nav class="space-x-4">
+                    <a href="/" class="text-gray-600 hover:text-blue-600 font-medium transition">Dashboard</a>
+                    <a href="/manage/" class="text-gray-600 hover:text-blue-600 font-medium transition">Manage</a>
+                </nav>
+            </div>
         </header>
 
         {% block content %}

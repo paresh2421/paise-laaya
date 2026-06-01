@@ -1,0 +1,6 @@
+{% for account in accounts %}
+<div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
+    <h3 class="text-sm text-gray-500 uppercase tracking-wider">{{ account.name }}</h3>
+    <p class="text-3xl font-bold mt-2">₹{{ account.balance }}</p>
+</div>
+{% endfor %}

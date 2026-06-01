@@ -65,6 +65,7 @@ def get_categories():
 
 @app.post("/add_transaction/")
 def add_transaction(
+    request: Request,
     type: str = Form(...),
     amount: float = Form(...),
     account_id: int = Form(...),
@@ -96,4 +97,53 @@ def add_transaction(
 
         session.commit()
 
-        return RedirectResponse(url="/", status_code=303)
+        html_response = templates.TemplateResponse(
+            request=request,
+            name="partials/transaction_row.html",
+            context={"tx": new_transaction}
+        )
+        
+        # 2. Fire the invisible flare!
+        html_response.headers["HX-Trigger"] = "update-balances"
+        
+        return html_response
+    
+@app.get("/balances/")
+def get_balances(request: Request):
+    with Session(engine) as session:
+        accounts = session.exec(select(Account)).all()
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/balance_card.html",
+            context={"accounts": accounts}
+        )
+        
+# --- MANAGEMENT PORTAL ROUTES ---
+
+@app.get("/manage/")
+def manage_page(request: Request):
+    with Session(engine) as session:
+        accounts = session.exec(select(Account)).all()
+        categories = session.exec(select(Category)).all()
+        
+        return templates.TemplateResponse(
+            request=request, 
+            name="manage.html", 
+            context={"accounts": accounts, "categories": categories}
+        )
+
+@app.post("/add_account/")
+def add_account(name: str = Form(...), balance: float = Form(0.0)):
+    with Session(engine) as session:
+        new_account = Account(name=name, balance=balance)
+        session.add(new_account)
+        session.commit()
+        return RedirectResponse(url="/manage/", status_code=303)
+
+@app.post("/add_category/")
+def add_category(name: str = Form(...)):
+    with Session(engine) as session:
+        new_category = Category(name=name)
+        session.add(new_category)
+        session.commit()
+        return RedirectResponse(url="/manage/", status_code=303)
