@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field
-from datetime import date
+from datetime import datetime
 
 
 class Category(SQLModel, table=True):
@@ -18,7 +18,7 @@ class Transaction(SQLModel, table=True):
     amount: float
     type: str
     note: str | None = None
-    transaction_date: date = Field(default_factory=date.today)
+    transaction_date: datetime = Field(default_factory=datetime.now)
 
     # foreign keys to account and category table
     account_id: int | None = Field(default=None, foreign_key="account.id")

@@ -1,30 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wallet Manager</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
+    <script>
+      tailwind.config = {
+        darkMode: "class", // This tells Tailwind to look for class="dark"
+      };
+    </script>
+
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans p-6">
-    
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      // 1. On page load, check if the user previously chose dark mode
+      if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      // 2. The function our button will call to flip the switch
+      function toggleDarkMode() {
+        document.documentElement.classList.toggle("dark");
+        if (document.documentElement.classList.contains("dark")) {
+          localStorage.theme = "dark";
+        } else {
+          localStorage.theme = "light";
+        }
+      }
+    </script>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-800 font-sans p-6 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
+  >
     <div class="max-w-5xl mx-auto">
-      <header class="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <div class="flex items-baseline gap-6">
-                <h1 class="text-2xl font-bold text-blue-600">Wallet Manager</h1>
-                <nav class="space-x-4">
-                    <a href="/" class="text-gray-600 hover:text-blue-600 font-medium transition">Dashboard</a>
-                    <a href="/manage/" class="text-gray-600 hover:text-blue-600 font-medium transition">Manage</a>
-                </nav>
-            </div>
-        </header>
+      <header
+        class="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-colors duration-200"
+      >
+        <div class="flex items-baseline gap-6">
+          <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            Wallet Manager
+          </h1>
+          <nav class="space-x-4">
+            <a
+              href="/"
+              class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition"
+              >Dashboard</a
+            >
+            <a
+              href="/manage/"
+              class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition"
+              >Manage</a
+            >
+          </nav>
+        </div>
 
-        {% block content %}
-        {% endblock %}
+        <div class="flex items-center gap-4">
+          <button
+            onclick="toggleDarkMode()"
+            class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+          >
+            <span class="dark:hidden">🌙</span>
+            <span class="hidden dark:inline">☀️</span>
+          </button>
+        </div>
+      </header>
+
+      {% block content %} {% endblock %}
     </div>
-
-</body>
+  </body>
 </html>

@@ -1,0 +1,40 @@
+<tr class="bg-blue-50 border-y-2 border-blue-200">
+    <td colspan="5" class="p-3">
+        
+        <form hx-post="/update_transaction/{{ tx.id }}" hx-target="closest tr" hx-swap="outerHTML" class="flex flex-wrap gap-3 items-end">
+            
+            <div class="flex-grow">
+                <label class="block text-xs font-medium text-gray-500">Date & Time</label>
+                <input type="datetime-local" name="transaction_date" value="{{ tx.transaction_date.strftime('%Y-%m-%dT%H:%M') }}" class="w-full p-1 border rounded text-sm" required>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500">Type</label>
+                <select name="type" class="w-full p-1 border rounded text-sm" required>
+                    <option value="expense" {% if tx.type == 'expense' %}selected{% endif %}>Expense</option>
+                    <option value="income" {% if tx.type == 'income' %}selected{% endif %}>Income</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500">Amount</label>
+                <input type="number" step="0.01" name="amount" value="{{ tx.amount }}" class="w-24 p-1 border rounded text-sm" required>
+            </div>
+
+            <input type="hidden" name="account_id" value="{{ tx.account_id }}">
+            <input type="hidden" name="category_id" value="{{ tx.category_id }}">
+
+            <div class="flex-grow">
+                <label class="block text-xs font-medium text-gray-500">Note</label>
+                <input type="text" name="note" value="{{ tx.note or '' }}" class="w-full p-1 border rounded text-sm" placeholder="Optional">
+            </div>
+            
+            <div class="flex gap-2 pb-0.5">
+                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded shadow-sm hover:bg-green-600 font-bold text-sm">Save</button>
+                
+                <button type="button" hx-get="/cancel_edit/{{ tx.id }}" hx-target="closest tr" hx-swap="outerHTML" class="bg-gray-400 text-white px-3 py-1 rounded shadow-sm hover:bg-gray-500 font-bold text-sm">Cancel</button>
+            </div>
+        </form>
+
+    </td>
+</tr>

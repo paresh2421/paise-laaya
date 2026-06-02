@@ -1,10 +1,36 @@
-<tr class="text-sm">
-    <td class="py-3 text-gray-500">{{ tx.transaction_date }}</td>
-    <td class="py-3 capitalize font-medium {% if tx.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
-        {{ tx.type }}
-    </td>
-    <td class="py-3 font-bold {% if tx.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
-        {% if tx.type == 'income' %}+{% else %}-{% endif %}₹{{ tx.amount }}
-    </td>
-    <td class="py-3 text-gray-600 italic">{{ tx.note or '—' }}</td>
+<tr class="text-sm dark:border-gray-700 border-b border-gray-100 last:border-0">
+  <td class="py-3 text-gray-500 dark:text-gray-400">
+    {{ tx.transaction_date.strftime('%b %d, %Y %I:%M %p') }}
+  </td>
+  <td
+    class="py-3 capitalize font-medium {% if tx.type == 'income' %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}"
+  >
+    {{ tx.type }}
+  </td>
+  <td
+    class="py-3 font-bold {% if tx.type == 'income' %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}"
+  >
+    {% if tx.type == 'income' %}+{% else %}-{% endif %}₹{{ tx.amount }}
+  </td>
+  <td class="py-3 text-gray-600 dark:text-gray-400 italic">
+    {{ tx.note or '—' }}
+  </td>
+  <td class="py-3 text-right">
+    <button
+      hx-get="/edit_transaction_form/{{ tx.id }}"
+      hx-target="closest tr"
+      hx-swap="outerHTML"
+      class="text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-bold text-lg px-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700 transition"
+    >
+      ✎
+    </button>
+    <button
+      hx-delete="/delete_transaction/{{ tx.id }}"
+      hx-target="closest tr"
+      hx-swap="outerHTML"
+      class="text-red-400 hover:text-red-600 dark:hover:text-red-300 font-bold text-lg px-2 rounded hover:bg-red-50 dark:hover:bg-gray-700 transition"
+    >
+      ×
+    </button>
+  </td>
 </tr>
