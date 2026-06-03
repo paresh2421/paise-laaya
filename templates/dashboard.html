@@ -1,13 +1,13 @@
 <style>
-    /* By default, hide the empty state message row */
-    #table-empty-state {
-        display: none;
-    }
-    
-    /* ONLY show it if it is the absolute only child left inside the tbody! */
-    #table-empty-state:only-child {
-        display: table-row;
-    }
+  /* By default, hide the empty state message row */
+  #table-empty-state {
+    display: none;
+  }
+
+  /* ONLY show it if it is the absolute only child left inside the tbody! */
+  #table-empty-state:only-child {
+    display: table-row;
+  }
 </style>
 {% extends "base.html" %} {% block content %}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -124,23 +124,42 @@
       {% include "partials/balance_card.html" %}
     </div>
 
-   <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200 mb-6 mt-6">
-            <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Expenses by Category</h2>
-            
-            <div id="chart-empty-state" class="hidden h-64 flex items-center justify-center text-gray-400 dark:text-gray-500 italic">
-                No expenses recorded yet.
-            </div>
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200 mb-6 mt-6"
+    >
+      <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+        Expenses by Category
+      </h2>
 
-            <div id="chart-container" class="relative h-64">
-                <canvas id="expenseChart"></canvas>
-            </div>
-        </div>
+      <div
+        id="chart-empty-state"
+        class="hidden h-64 flex items-center justify-center text-gray-400 dark:text-gray-500 italic"
+      >
+        No expenses recorded yet.
+      </div>
+
+      <div id="chart-container" class="relative h-64">
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </div>
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
     >
-      <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-        Recent History
-      </h2>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+          Recent History
+        </h2>
+
+        <input
+          type="month"
+          name="month"
+          value="{{ current_month }}"
+          class="p-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white text-sm cursor-pointer"
+          hx-get="/filter_transactions/"
+          hx-target="#history-list"
+          hx-trigger="change"
+        />
+      </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -155,18 +174,11 @@
               <th class="pb-3"></th>
             </tr>
           </thead>
-         <tbody id="history-list" class="divide-y divide-gray-100 dark:divide-gray-700">
-            
-            {% for tx in transactions %}
-                {% include "partials/transaction_row.html" %}
-            {% endfor %} 
-            
-            <tr id="table-empty-state">
-              <td colspan="5" class="py-6 text-center text-gray-400 dark:text-gray-500 italic">
-                No transactions recorded yet.
-              </td>
-            </tr>
-            
+          <tbody
+            id="history-list"
+            class="divide-y divide-gray-100 dark:divide-gray-700"
+          >
+            {% include "partials/transaction_list.html" %}
           </tbody>
         </table>
       </div>
@@ -174,86 +186,97 @@
   </div>
 </div>
 <script>
-    let expenseChart;
+  let expenseChart;
 
-    async function renderChart() {
-        // 1. Fetch the data from our new Python route
-        const response = await fetch('/api/expenses-by-category');
-        const data = await response.json();
+  async function renderChart() {
+    // 1. Fetch the data from our new Python route
+    const response = await fetch("/api/expenses-by-category");
+    const data = await response.json();
 
-        const canvasContainer = document.getElementById('chart-container');
-        const emptyState = document.getElementById('chart-empty-state');
+    const canvasContainer = document.getElementById("chart-container");
+    const emptyState = document.getElementById("chart-empty-state");
 
-        if (data.values.length === 0 || data.values.every(v => v === 0)) {
-            // Hide the canvas, show the message, and stop running the script
-            canvasContainer.classList.add('hidden');
-            emptyState.classList.remove('hidden');
-            return; 
-        } else {
-            // Ensure the canvas is visible and the message is hidden
-            canvasContainer.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-        }
-
-        const ctx = document.getElementById('expenseChart');
-        
-        // 2. Destroy the old chart if it exists (so we don't draw charts on top of charts)
-        if (expenseChart) {
-            expenseChart.destroy();
-        }
-
-        // 3. Check if dark mode is active to format text colors
-        const isDark = document.documentElement.classList.contains('dark');
-        const textColor = isDark ? '#9ca3af' : '#4b5563';
-        const borderColor = isDark ? '#1f2937' : '#ffffff';
-
-        // 4. Draw the new Doughnut Chart
-        expenseChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    data: data.values,
-                    // A sleek color palette
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
-                    borderWidth: isDark ? 2 : 1,
-                    borderColor: borderColor
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { 
-                        position: 'right', 
-                        labels: { color: textColor } 
-                    }
-                }
-            }
-        });
+    if (data.values.length === 0 || data.values.every((v) => v === 0)) {
+      // Hide the canvas, show the message, and stop running the script
+      canvasContainer.classList.add("hidden");
+      emptyState.classList.remove("hidden");
+      return;
+    } else {
+      // Ensure the canvas is visible and the message is hidden
+      canvasContainer.classList.remove("hidden");
+      emptyState.classList.add("hidden");
     }
 
-    // A. Draw the chart immediately when the page first loads
-    renderChart();
-  
-    // B. The Magic: Listen for the exact same flare that updates our bank balances!
-    document.body.addEventListener('update-balances', function() {
-        // 1. Redraw the chart
-        renderChart();
+    const ctx = document.getElementById("expenseChart");
 
-        // 2. Fix the Table Empty State
-        const tableBody = document.getElementById('history-list');
-        const emptyRow = document.getElementById('table-empty-state');
-        
-        // Count how many rows exist (ignoring the empty-state row itself)
-        const transactionRows = tableBody.querySelectorAll('tr:not(#table-empty-state)');
+    // 2. Destroy the old chart if it exists (so we don't draw charts on top of charts)
+    if (expenseChart) {
+      expenseChart.destroy();
+    }
 
-        // If there are no actual transactions, show the message. Otherwise, hide it.
-        if (transactionRows.length === 0) {
-            emptyRow.classList.remove('hidden');
-        } else {
-            emptyRow.classList.add('hidden');
-        }
+    // 3. Check if dark mode is active to format text colors
+    const isDark = document.documentElement.classList.contains("dark");
+    const textColor = isDark ? "#9ca3af" : "#4b5563";
+    const borderColor = isDark ? "#1f2937" : "#ffffff";
+
+    // 4. Draw the new Doughnut Chart
+    expenseChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            data: data.values,
+            // A sleek color palette
+            backgroundColor: [
+              "#3b82f6",
+              "#10b981",
+              "#f59e0b",
+              "#ef4444",
+              "#8b5cf6",
+              "#ec4899",
+            ],
+            borderWidth: isDark ? 2 : 1,
+            borderColor: borderColor,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "right",
+            labels: { color: textColor },
+          },
+        },
+      },
     });
+  }
+
+  // A. Draw the chart immediately when the page first loads
+  renderChart();
+
+  // B. The Magic: Listen for the exact same flare that updates our bank balances!
+  document.body.addEventListener("update-balances", function () {
+    // 1. Redraw the chart
+    renderChart();
+
+    // 2. Fix the Table Empty State
+    const tableBody = document.getElementById("history-list");
+    const emptyRow = document.getElementById("table-empty-state");
+
+    // Count how many rows exist (ignoring the empty-state row itself)
+    const transactionRows = tableBody.querySelectorAll(
+      "tr:not(#table-empty-state)",
+    );
+
+    // If there are no actual transactions, show the message. Otherwise, hide it.
+    if (transactionRows.length === 0) {
+      emptyRow.classList.remove("hidden");
+    } else {
+      emptyRow.classList.add("hidden");
+    }
+  });
 </script>
 {% endblock %}

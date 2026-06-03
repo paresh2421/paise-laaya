@@ -1,0 +1,9 @@
+{% for tx in transactions %}
+    {% include "partials/transaction_row.html" %}
+{% endfor %} 
+
+<tr id="table-empty-state">
+    <td colspan="5" class="py-6 text-center text-gray-400 dark:text-gray-500 italic">
+        No transactions found for this period.
+    </td>
+</tr>

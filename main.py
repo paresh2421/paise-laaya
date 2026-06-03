@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from datetime import datetime
+from calendar import monthrange
 
 
 @asynccontextmanager
@@ -35,6 +36,7 @@ def read_root(request: Request):
                 "categories": categories,
                 "transactions": transactions,
                 "today": datetime.now().strftime("%Y-%m-%dT%H:%M"),
+                "current_month":datetime.now().strftime("%Y-%m")
             },
         )
 
@@ -255,3 +257,35 @@ def expenses_by_category():
             "labels": list(data.keys()), 
             "values": list(data.values())
         }
+
+
+# --- FILTER ROUTE ---
+
+@app.get("/filter_transactions/")
+def filter_transactions(request: Request, month: str = None):
+    with Session(engine) as session:
+        # Start with a base query
+        query = select(Transaction).order_by(Transaction.id.desc())
+        
+        # If the user selected a month, apply the boundaries!
+        if month:
+            # Parse the "YYYY-MM" string from the HTML input
+            year_num, month_num = map(int, month.split('-'))
+            
+            # Find the very first and very last second of that month
+            start_date = datetime(year_num, month_num, 1)
+            last_day = monthrange(year_num, month_num)[1]
+            end_date = datetime(year_num, month_num, last_day, 23, 59, 59)
+            
+            # Apply the filter to the database query
+            query = query.where(Transaction.transaction_date >= start_date)
+            query = query.where(Transaction.transaction_date <= end_date)
+            
+        # Execute the query and return ONLY the tiny list partial
+        filtered_txs = session.exec(query).all()
+        
+        return templates.TemplateResponse(
+            request=request, 
+            name="partials/transaction_list.html", 
+            context={"transactions": filtered_txs}
+        )
