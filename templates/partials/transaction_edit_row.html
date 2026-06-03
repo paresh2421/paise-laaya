@@ -1,4 +1,4 @@
-<tr class="bg-blue-50 border-y-2 border-blue-200">
+<tr class="bg-emerald-50 border-y-2 border-emerald-200">
     <td colspan="5" class="p-3">
         
         <form hx-post="/update_transaction/{{ tx.id }}" hx-target="closest tr" hx-swap="outerHTML" class="flex flex-wrap gap-3 items-end">
@@ -30,9 +30,9 @@
             </div>
             
             <div class="flex gap-2 pb-0.5">
-                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded shadow-sm hover:bg-green-600 font-bold text-sm">Save</button>
+                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded shadow-md hover:bg-green-600 font-bold text-sm">Save</button>
                 
-                <button type="button" hx-get="/cancel_edit/{{ tx.id }}" hx-target="closest tr" hx-swap="outerHTML" class="bg-gray-400 text-white px-3 py-1 rounded shadow-sm hover:bg-gray-500 font-bold text-sm">Cancel</button>
+                <button type="button" hx-get="/cancel_edit/{{ tx.id }}" hx-target="closest tr" hx-swap="outerHTML" class="bg-gray-400 text-white px-3 py-1 rounded shadow-md hover:bg-gray-500 font-bold text-sm">Cancel</button>
             </div>
         </form>
 

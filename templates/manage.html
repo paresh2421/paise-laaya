@@ -3,8 +3,8 @@
 {% block content %}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-        <h2 class="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">Add Bank Account</h2>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+        <h2 class="text-xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Add Bank Account</h2>
         
         <form action="/add_account/" method="POST" class="space-y-4">
             <div>
@@ -15,7 +15,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Starting Balance (₹)</label>
                 <input type="number" step="0.01" name="balance" value="0.00" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
             </div>
-            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">
+            <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700 transition">
                 Create Account
             </button>
         </form>
@@ -31,7 +31,7 @@
         </ul>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200">
         <h2 class="text-xl font-bold mb-4 text-green-600 dark:text-green-400">Add Category</h2>
         
         <form action="/add_category/" method="POST" class="space-y-4">

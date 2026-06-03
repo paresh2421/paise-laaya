@@ -12,7 +12,7 @@
 {% extends "base.html" %} {% block content %}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
   <div
-    class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+    class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md h-fit border border-gray-200 dark:border-gray-700 transition-colors duration-200"
   >
     <h2 class="text-xl font-bold mb-4">New Transaction</h2>
     <form
@@ -108,7 +108,7 @@
 
       <button
         type="submit"
-        class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-150"
+        class="w-full bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700 transition duration-150"
       >
         Save Transaction
       </button>
@@ -117,15 +117,13 @@
 
   <div class="md:col-span-2 space-y-6">
     <div
-      class="grid grid-cols-2 gap-4 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-      hx-get="/balances/"
-      hx-trigger="update-balances from:body"
+      id="balance-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
     >
       {% include "partials/balance_card.html" %}
     </div>
-
-    <div
-      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200 mb-6 mt-6"
+    <!-- <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200 mb-6 mt-6"
     >
       <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
         Expenses by Category
@@ -141,9 +139,9 @@
       <div id="chart-container" class="relative h-64">
         <canvas id="expenseChart"></canvas>
       </div>
-    </div>
+    </div> -->
     <div
-      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+      class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200"
     >
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -186,76 +184,76 @@
   </div>
 </div>
 <script>
-  let expenseChart;
+  // let expenseChart;
 
-  async function renderChart() {
-    // 1. Fetch the data from our new Python route
-    const response = await fetch("/api/expenses-by-category");
-    const data = await response.json();
+  // async function renderChart() {
+  //   // 1. Fetch the data from our new Python route
+  //   const response = await fetch("/api/expenses-by-category");
+  //   const data = await response.json();
 
-    const canvasContainer = document.getElementById("chart-container");
-    const emptyState = document.getElementById("chart-empty-state");
+  //   const canvasContainer = document.getElementById("chart-container");
+  //   const emptyState = document.getElementById("chart-empty-state");
 
-    if (data.values.length === 0 || data.values.every((v) => v === 0)) {
-      // Hide the canvas, show the message, and stop running the script
-      canvasContainer.classList.add("hidden");
-      emptyState.classList.remove("hidden");
-      return;
-    } else {
-      // Ensure the canvas is visible and the message is hidden
-      canvasContainer.classList.remove("hidden");
-      emptyState.classList.add("hidden");
-    }
+  //   if (data.values.length === 0 || data.values.every((v) => v === 0)) {
+  //     // Hide the canvas, show the message, and stop running the script
+  //     canvasContainer.classList.add("hidden");
+  //     emptyState.classList.remove("hidden");
+  //     return;
+  //   } else {
+  //     // Ensure the canvas is visible and the message is hidden
+  //     canvasContainer.classList.remove("hidden");
+  //     emptyState.classList.add("hidden");
+  //   }
 
-    const ctx = document.getElementById("expenseChart");
+  //   const ctx = document.getElementById("expenseChart");
 
-    // 2. Destroy the old chart if it exists (so we don't draw charts on top of charts)
-    if (expenseChart) {
-      expenseChart.destroy();
-    }
+  //   // 2. Destroy the old chart if it exists (so we don't draw charts on top of charts)
+  //   if (expenseChart) {
+  //     expenseChart.destroy();
+  //   }
 
-    // 3. Check if dark mode is active to format text colors
-    const isDark = document.documentElement.classList.contains("dark");
-    const textColor = isDark ? "#9ca3af" : "#4b5563";
-    const borderColor = isDark ? "#1f2937" : "#ffffff";
+  //   // 3. Check if dark mode is active to format text colors
+  //   const isDark = document.documentElement.classList.contains("dark");
+  //   const textColor = isDark ? "#9ca3af" : "#4b5563";
+  //   const borderColor = isDark ? "#1f2937" : "#ffffff";
 
-    // 4. Draw the new Doughnut Chart
-    expenseChart = new Chart(ctx, {
-      type: "doughnut",
-      data: {
-        labels: data.labels,
-        datasets: [
-          {
-            data: data.values,
-            // A sleek color palette
-            backgroundColor: [
-              "#3b82f6",
-              "#10b981",
-              "#f59e0b",
-              "#ef4444",
-              "#8b5cf6",
-              "#ec4899",
-            ],
-            borderWidth: isDark ? 2 : 1,
-            borderColor: borderColor,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: "right",
-            labels: { color: textColor },
-          },
-        },
-      },
-    });
-  }
+  //   // 4. Draw the new Doughnut Chart
+  //   expenseChart = new Chart(ctx, {
+  //     type: "doughnut",
+  //     data: {
+  //       labels: data.labels,
+  //       datasets: [
+  //         {
+  //           data: data.values,
+  //           // A sleek color palette
+  //           backgroundColor: [
+  //             "#3b82f6",
+  //             "#10b981",
+  //             "#f59e0b",
+  //             "#ef4444",
+  //             "#8b5cf6",
+  //             "#ec4899",
+  //           ],
+  //           borderWidth: isDark ? 2 : 1,
+  //           borderColor: borderColor,
+  //         },
+  //       ],
+  //     },
+  //     options: {
+  //       responsive: true,
+  //       maintainAspectRatio: false,
+  //       plugins: {
+  //         legend: {
+  //           position: "right",
+  //           labels: { color: textColor },
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
 
-  // A. Draw the chart immediately when the page first loads
-  renderChart();
+  // // A. Draw the chart immediately when the page first loads
+  // renderChart();
 
   // B. The Magic: Listen for the exact same flare that updates our bank balances!
   document.body.addEventListener("update-balances", function () {
