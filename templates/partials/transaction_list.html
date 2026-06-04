@@ -1,9 +1,19 @@
-{% for tx in transactions %}
-    {% include "partials/transaction_row.html" %}
-{% endfor %} 
+{% for tx in transactions %} {% include "partials/transaction_row.html" %} {%
+endfor %}
 
 <tr id="table-empty-state">
-    <td colspan="5" class="py-6 text-center text-gray-400 dark:text-gray-500 italic">
+  <td colspan="5" class="py-16">
+    <div
+      class="flex flex-col items-center justify-center text-center opacity-70 hover:opacity-100 transition-opacity duration-300"
+    >
+      <span class="text-4xl mb-3">📝</span>
+      <p class="text-gray-500 dark:text-gray-400 font-medium text-lg">
         No transactions found for this period.
-    </td>
+      </p>
+      <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
+        Click the floating <strong class="text-emerald-500">+</strong> button to
+        record your first entry.
+      </p>
+    </div>
+  </td>
 </tr>

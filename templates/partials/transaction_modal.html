@@ -1,0 +1,129 @@
+<div
+  id="transaction-modal"
+  class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity"
+>
+  <div
+    class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md h-fit border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+  >
+    <button
+      onclick="
+        document.getElementById('transaction-modal').classList.add('hidden')
+      "
+      class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+    <h2 class="text-xl font-bold mb-4">New Transaction</h2>
+    <form
+      hx-post="/add_transaction/"
+      hx-target="#history-list"
+      hx-swap="afterbegin"
+      hx-on::after-request="document.getElementById('transaction-modal').classList.add('hidden'); this.reset()"
+      class="space-y-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Type</label
+        >
+        <select
+          name="type"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          required
+        >
+          <option value="" disabled selected>Select type</option>
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Date</label
+        >
+        <input
+          type="datetime-local"
+          name="transaction_date"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          value="{{ today }}"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Amount (₹)</label
+        >
+        <input
+          type="number"
+          step="0.01"
+          name="amount"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Account</label
+        >
+        <select
+          name="account_id"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          required
+        >
+          <option value="" disabled selected>Select account</option>
+
+          {% for account in accounts %}
+          <option value="{{ account.id }}">{{ account.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Category</label
+        >
+        <select
+          name="category_id"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          required
+        >
+          <option value="" disabled selected>Select category</option>
+
+          {% for category in categories %}
+          <option value="{{ category.id }}">{{ category.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-white"
+          >Note (Optional)</label
+        >
+        <input
+          type="text"
+          name="note"
+          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700 transition duration-150"
+      >
+        Save Transaction
+      </button>
+    </form>
+  </div>
+</div>

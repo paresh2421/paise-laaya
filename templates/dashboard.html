@@ -9,272 +9,95 @@
     display: table-row;
   }
 </style>
-{% extends "base.html" %} {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+{% extends "base.html" %} {% block content %} {% include
+"partials/transaction_modal.html" %}
+
+<div class="max-w-6xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 pb-32">
+  <!-- balance card -->
   <div
-    class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md h-fit border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+    class="flex flex-col md:flex-row justify-between items-end mb-2 mt-4 border-b border-gray-200 dark:border-gray-700 pb-4"
   >
-    <h2 class="text-xl font-bold mb-4">New Transaction</h2>
-    <form
-      hx-post="/add_transaction/"
-      hx-target="#history-list"
-      hx-swap="afterbegin"
-      hx-on::after-request="this.reset()"
-      class="space-y-4"
-    >
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Type</label
-        >
-        <select
-          name="type"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          required
-        >
-          <option value="" disabled selected>Select type</option>
-          <option value="expense">Expense</option>
-          <option value="income">Income</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Date</label
-        >
-        <input
-          type="datetime-local"
-          name="transaction_date"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          value="{{ today }}"
-          required
-        />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Amount (₹)</label
-        >
-        <input
-          type="number"
-          step="0.01"
-          name="amount"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          required
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Account</label
-        >
-        <select
-          name="account_id"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          required
-        >
-          <option value="" disabled selected>Select account</option>
-
-          {% for account in accounts %}
-          <option value="{{ account.id }}">{{ account.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Category</label
-        >
-        <select
-          name="category_id"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          required
-        >
-          <option value="" disabled selected>Select category</option>
-
-          {% for category in categories %}
-          <option value="{{ category.id }}">{{ category.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-white"
-          >Note (Optional)</label
-        >
-        <input
-          type="text"
-          name="note"
-          class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
-      </div>
-
-      <button
-        type="submit"
-        class="w-full bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700 transition duration-150"
+    <div>
+      <h2
+        class="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight"
       >
-        Save Transaction
-      </button>
-    </form>
-  </div>
-
-  <div class="md:col-span-2 space-y-6">
-    <div
-      id="balance-grid"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
-    >
-      {% include "partials/balance_card.html" %}
+        Financial Overview
+      </h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+        Track your balances and recent spending.
+      </p>
     </div>
-    <!-- <div
-      class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200 mb-6 mt-6"
-    >
-      <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-        Expenses by Category
+  </div>
+  <div
+    id="balance-grid"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+    hx-get="/balances/"
+    hx-trigger="update-balances from:body"
+  >
+    {% include "partials/balance_card.html" %}
+  </div>
+  <div
+    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+  >
+    <!-- transaction history -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+        Recent History
       </h2>
 
-      <div
-        id="chart-empty-state"
-        class="hidden h-64 flex items-center justify-center text-gray-400 dark:text-gray-500 italic"
-      >
-        No expenses recorded yet.
-      </div>
+      <input
+        type="month"
+        name="month"
+        value="{{ current_month }}"
+        class="p-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white text-sm cursor-pointer"
+        hx-get="/filter_transactions/"
+        hx-target="#history-list"
+        hx-trigger="change"
+      />
+    </div>
 
-      <div id="chart-container" class="relative h-64">
-        <canvas id="expenseChart"></canvas>
-      </div>
-    </div> -->
-    <div
-      class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-200"
-    >
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Recent History
-        </h2>
-
-        <input
-          type="month"
-          name="month"
-          value="{{ current_month }}"
-          class="p-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white text-sm cursor-pointer"
-          hx-get="/filter_transactions/"
-          hx-target="#history-list"
-          hx-trigger="change"
-        />
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr
-              class="border-b border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-500 dark:text-gray-400"
-            >
-              <th class="pb-3">Date</th>
-              <th class="pb-3">Type</th>
-              <th class="pb-3">Amount</th>
-              <th class="pb-3">Note</th>
-              <th class="pb-3"></th>
-            </tr>
-          </thead>
-          <tbody
-            id="history-list"
-            class="divide-y divide-gray-100 dark:divide-gray-700"
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[600px] text-left border-collapse">
+        <thead>
+          <tr
+            class="border-b border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-500 dark:text-gray-400"
           >
-            {% include "partials/transaction_list.html" %}
-          </tbody>
-        </table>
-      </div>
+            <th class="pb-3">Date</th>
+            <th class="pb-3">Type</th>
+            <th class="pb-3">Amount</th>
+            <th class="pb-3">Note</th>
+            <th class="pb-3"></th>
+          </tr>
+        </thead>
+        <tbody
+          id="history-list"
+          class="divide-y divide-gray-100 dark:divide-gray-700"
+        >
+          {% include "partials/transaction_list.html" %}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
-<script>
-  // let expenseChart;
-
-  // async function renderChart() {
-  //   // 1. Fetch the data from our new Python route
-  //   const response = await fetch("/api/expenses-by-category");
-  //   const data = await response.json();
-
-  //   const canvasContainer = document.getElementById("chart-container");
-  //   const emptyState = document.getElementById("chart-empty-state");
-
-  //   if (data.values.length === 0 || data.values.every((v) => v === 0)) {
-  //     // Hide the canvas, show the message, and stop running the script
-  //     canvasContainer.classList.add("hidden");
-  //     emptyState.classList.remove("hidden");
-  //     return;
-  //   } else {
-  //     // Ensure the canvas is visible and the message is hidden
-  //     canvasContainer.classList.remove("hidden");
-  //     emptyState.classList.add("hidden");
-  //   }
-
-  //   const ctx = document.getElementById("expenseChart");
-
-  //   // 2. Destroy the old chart if it exists (so we don't draw charts on top of charts)
-  //   if (expenseChart) {
-  //     expenseChart.destroy();
-  //   }
-
-  //   // 3. Check if dark mode is active to format text colors
-  //   const isDark = document.documentElement.classList.contains("dark");
-  //   const textColor = isDark ? "#9ca3af" : "#4b5563";
-  //   const borderColor = isDark ? "#1f2937" : "#ffffff";
-
-  //   // 4. Draw the new Doughnut Chart
-  //   expenseChart = new Chart(ctx, {
-  //     type: "doughnut",
-  //     data: {
-  //       labels: data.labels,
-  //       datasets: [
-  //         {
-  //           data: data.values,
-  //           // A sleek color palette
-  //           backgroundColor: [
-  //             "#3b82f6",
-  //             "#10b981",
-  //             "#f59e0b",
-  //             "#ef4444",
-  //             "#8b5cf6",
-  //             "#ec4899",
-  //           ],
-  //           borderWidth: isDark ? 2 : 1,
-  //           borderColor: borderColor,
-  //         },
-  //       ],
-  //     },
-  //     options: {
-  //       responsive: true,
-  //       maintainAspectRatio: false,
-  //       plugins: {
-  //         legend: {
-  //           position: "right",
-  //           labels: { color: textColor },
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // // A. Draw the chart immediately when the page first loads
-  // renderChart();
-
-  // B. The Magic: Listen for the exact same flare that updates our bank balances!
-  document.body.addEventListener("update-balances", function () {
-    // 1. Redraw the chart
-    renderChart();
-
-    // 2. Fix the Table Empty State
-    const tableBody = document.getElementById("history-list");
-    const emptyRow = document.getElementById("table-empty-state");
-
-    // Count how many rows exist (ignoring the empty-state row itself)
-    const transactionRows = tableBody.querySelectorAll(
-      "tr:not(#table-empty-state)",
-    );
-
-    // If there are no actual transactions, show the message. Otherwise, hide it.
-    if (transactionRows.length === 0) {
-      emptyRow.classList.remove("hidden");
-    } else {
-      emptyRow.classList.add("hidden");
-    }
-  });
-</script>
+<button
+  onclick="
+    document.getElementById('transaction-modal').classList.remove('hidden')
+  "
+  class="fixed bottom-8 right-8 md:bottom-12 md:right-12 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 z-40 group"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-8 w-8 transition-transform group-hover:rotate-90"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 4v16m8-8H4"
+    />
+  </svg>
+</button>
 {% endblock %}

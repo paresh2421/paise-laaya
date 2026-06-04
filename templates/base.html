@@ -5,24 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wallet Manager</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
 
-   <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        // This overrides the default sans-serif font
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'], 
-                    }
-                }
-            }
-        }
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              // This overrides the default sans-serif font
+              sans: ['"Plus Jakarta Sans"', "sans-serif"],
+            },
+          },
+        },
+      };
     </script>
 
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
@@ -30,55 +33,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-      // 1. On page load, check if the user previously chose dark mode
-      if (
-        localStorage.theme === "dark" ||
-        (!("theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-
-      // 2. The function our button will call to flip the switch
-      function toggleDarkMode() {
-        document.documentElement.classList.toggle("dark");
-        if (document.documentElement.classList.contains("dark")) {
-          localStorage.theme = "dark";
-        } else {
-          localStorage.theme = "light";
-        }
-      }
-    </script>
+<script src="/static/js/themes.js"></script>
   </head>
   <body
     class="bg-gray-100 text-gray-800 font-sans p-6 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
   >
     <div class="max-w-5xl mx-auto">
-     <header class="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200 gap-4">
-            
-            <div class="flex flex-col md:flex-row items-center md:items-baseline gap-4 md:gap-6 w-full md:w-auto">
-                <h1 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Wallet Manager</h1>
-                <nav class="flex space-x-4">
-                    <a href="/" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition">Dashboard</a>
-                    <a href="/charts/" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition">Analytics</a>
-                    <a href="/manage/" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition">Manage</a>
-                </nav>
-            </div>
-            
-            <div class="flex items-center justify-between w-full md:w-auto gap-4 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 dark:border-gray-700">
-                               
-                <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition ml-auto md:ml-0">
-                    <span class="dark:hidden">🌙</span>
-                    <span class="hidden dark:inline">☀️</span>
-                </button>
-            </div>
-            
-        </header>
-
-      {% block content %} {% endblock %}
+      {% include "partials/navbar.html" %} {% block content %} {% endblock %}
     </div>
   </body>
 </html>
