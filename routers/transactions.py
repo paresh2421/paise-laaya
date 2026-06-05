@@ -147,26 +147,35 @@ def update_transaction(
 
 # --- CHART DATA ROUTE ---
 
-
 @router.get("/api/expenses-by-category")
-def expenses_by_category():
+def expenses_by_category(month: str = None):
     with Session(engine) as session:
-        # 1. Get all expenses and all categories
-        expenses = session.exec(
-            select(Transaction).where(Transaction.type == "expense")
-        ).all()
+        query = select(Transaction).where(Transaction.type == "expense")
+        
+        # 1. Apply the Month Filter if provided
+        if month:
+            year_num, month_num = map(int, month.split("-"))
+        else:
+            now = datetime.now()
+            year_num, month_num = now.year, now.month
+            
+        start_date = datetime(year_num, month_num, 1)
+        last_day = monthrange(year_num, month_num)[1]
+        end_date = datetime(year_num, month_num, last_day, 23, 59, 59)
+        
+        query = query.where(Transaction.transaction_date >= start_date)
+        query = query.where(Transaction.transaction_date <= end_date)
+        
+        # 2. Fetch and group the data
+        expenses = session.exec(query).all()
         categories = session.exec(select(Category)).all()
-
-        # 2. Map category IDs to their actual Names
         cat_map = {c.id: c.name for c in categories}
-
-        # 3. Add up the amounts for each category
+        
         data = {}
         for exp in expenses:
             c_name = cat_map.get(exp.category_id, "Uncategorized")
             data[c_name] = data.get(c_name, 0) + exp.amount
-
-        # 4. Return it exactly how Chart.js expects it (Lists of labels and values)
+            
         return {"labels": list(data.keys()), "values": list(data.values())}
 
 

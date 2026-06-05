@@ -27,17 +27,45 @@
         },
       };
     </script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/loading-states.js"></script>
+    <style>
+      /* A sleek, modern loading bar at the top of the page */
+      .htmx-request.loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background-color: #10b981; /* Tailwind Emerald 500 */
+        animation: loading 2s infinite linear;
+        z-index: 50;
+      }
+      @keyframes loading {
+        0% {
+          width: 0%;
+          opacity: 1;
+        }
+        50% {
+          width: 70%;
+          opacity: 1;
+        }
+        100% {
+          width: 100%;
+          opacity: 0;
+        }
+      }
+    </style>
 
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="/static/js/themes.js"></script>
+    <script src="/static/js/themes.js"></script>
   </head>
   <body
     class="bg-gray-100 text-gray-800 font-sans p-6 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
   >
+    <div class="loading-bar"></div>
     <div class="max-w-5xl mx-auto">
       {% include "partials/navbar.html" %} {% block content %} {% endblock %}
     </div>
